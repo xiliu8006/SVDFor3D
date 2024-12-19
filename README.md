@@ -5,7 +5,7 @@
 ## How to train the SVD for 3DGS-Enhancer
 
 ```bash
-
+sbatch train_single_nodes.sh
 ```
 
 ## Acknowledgement

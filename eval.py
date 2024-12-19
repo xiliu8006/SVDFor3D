@@ -40,41 +40,6 @@ class EvalDataset(Dataset):
             
         return{'lr_frames': lr_frames, 'gt_frames': gt_frames}
 
-# class EvalDataset(Dataset):
-#     def __init__(self, width=1024, height=576, sample_frames=26, max_ratio=3, method='nodropout_camP'):
-#         self.base_folder = f'/scratch/xi9/DATASET/DL3DV-960P-Benchmark'
-#         self.ref_folders = '/scratch/xi9/Large-DATASET/DL3DV-10K/1K'
-#         self.base_scenes = set(os.listdir(self.base_folder))
-#         self.ref_scenes = set(os.listdir(self.ref_folders))
-#         self.scenes = list(self.base_scenes.intersection(self.ref_scenes))
-
-#     def __len__(self):
-#         return len(self.scenes)
-    
-#     def get_scene(self, idx):
-#         return self.scenes[idx]
-    
-#     def __getitem__(self, idx):
-#         scene = self.scenes[idx]
-#         lr_frames = {}
-#         gt_frames = {}
-#         for view_num in os.listdir(os.path.join(self.base_folder, scene, 'lr')):
-#             scene_path = os.path.join(self.base_folder, scene, 'lr', view_num, f'train_{view_num}')
-#             if not os.path.exists(scene_path):
-#                 print("not exist: ", scene_path)
-#                 continue
-#             cur_lr_frames = sorted([os.path.join(scene_path, img) for img in os.listdir(scene_path)])
-#             cur_gt_frames = []
-#             for i, frame_path in enumerate(cur_lr_frames):
-#                 ref_frame_name = os.path.basename(frame_path).replace('_ref', '')
-#                 gt_frame_path = os.path.join(self.ref_folders, scene, 'images_4', ref_frame_name)
-#                 cur_gt_frames.append(gt_frame_path)
-#             assert len(cur_gt_frames) == len(cur_lr_frames), f"{len(cur_gt_frames)}, {len(cur_lr_frames)}"
-#             lr_frames[view_num] = cur_lr_frames
-#             gt_frames[view_num] = cur_gt_frames
-            
-#         return{'lr_frames': lr_frames, 'gt_frames': gt_frames}
-
 def psnr(img1, img2):
     mse = (((img1 - img2)) ** 2).view(img1.shape[0], -1).mean(1, keepdim=True)
     return 20 * torch.log10(1.0 / torch.sqrt(mse))
@@ -194,6 +159,5 @@ if __name__ == '__main__':
     output_lines.append(f"Total average PSNR across all views: {total_average_psnr:.2f}\n")
     
     file_path =  f'/scratch/xi9/DATASET/DL3DV-960P-Benchmark-SVD/{args.method}/psnr_results.txt'
-    # file_path =  f'/scratch/xi9/DATASET/DL3DV-960P-Benchmark/psnr_results.txt'
     with open(file_path, 'w') as f:
         f.writelines(output_lines)

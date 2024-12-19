@@ -24,17 +24,17 @@ from pathlib import Path
 import argparse
 
 class DummyInferenceDataset(Dataset):
-    def __init__(self, width=1024, height=576, sample_frames=26, scene_txt = '', view_num = '3',max_ratio=3, render_all=False):
+    def __init__(self, base_folders, ref_folders, width=1024, height=576, sample_frames=26, scene_txt = '', view_num = '3',max_ratio=3, render_all=False):
         """
         Args:
             num_samples (int): Number of samples in the dataset.
             channels (int): Number of channels, default is 3 for RGB.
         """
         # Define the path to the folder containing video frames
-        self.base_folder = '/home/xi9/code/DATASET/DL3DV-960P-2K-Randominit'
-        self.ref_folders = '/scratch/xi9/Large-DATASET/DL3DV-10K/2K'
-        # self.base_folder = '/scratch/xi9/DATASET/MipNeRF360-withpc-r8'
-        # self.ref_folders = '/project/siyuh/common/xiliu/MipNeRF360-v1'
+        self.base_folder = base_folders
+        self.ref_folders = ref_folders
+        # self.base_folder = '/home/xi9/code/DATASET/DL3DV-960P-2K-Randominit'
+        # self.ref_folders = '/scratch/xi9/Large-DATASET/DL3DV-10K/2K'
         self.base_scenes = set(os.listdir(self.base_folder))
         self.ref_scenes = set(os.listdir(self.ref_folders))
         self.scenes = []
@@ -513,6 +513,8 @@ if __name__ == '__main__':
     parser.add_argument("--model_path", type=str, help="Model path")
     parser.add_argument("--output_path", type=str, help="Output path")
     parser.add_argument("--num_views", type=str, help="num of reference views")
+    parser.add_argument("--base_folders", type=str, help="num of reference views")
+    parser.add_argument("--ref_folders", type=str, help="num of reference views")
     args = parser.parse_args()
 
     pretrained_model_name_or_path = 'stabilityai/stable-video-diffusion-img2vid-xt'
@@ -552,7 +554,7 @@ if __name__ == '__main__':
     width=960
     height=512
     num_frames=26
-    train_dataset = DummyInferenceDataset(width=width, height=height, sample_frames=num_frames, scene_txt=args.scene, view_num=args.num_views, render_all=False)
+    train_dataset = DummyInferenceDataset(base_folders=args.base_folders, ref_folders=args.ref_folders, width=width, height=height, sample_frames=num_frames, scene_txt=args.scene, view_num=args.num_views, render_all=False)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=1,
