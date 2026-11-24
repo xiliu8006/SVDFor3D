@@ -18,6 +18,9 @@ To perform inference, use the following command:
 sbatch multi_nodes_inference.sh
 ```
 
+To run the full 3DGS-Enhancer (video diffusion model + spatial-temporal decoder), see `example.py` in the
+[3DGS-Enhancer](https://github.com/xiliu8006/3DGS-Enhancer) repository.
+
 ### Note
 
 Before using SVD to generate results, ensure you use `split_scene_to_txt.py` to generate a folder containing text files that are written by scene names.
