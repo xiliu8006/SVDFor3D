@@ -243,11 +243,8 @@ class StableFlowVideoDiffusionPipeline(StableVideoDiffusionPipeline):
         # of the Imagen paper: https://arxiv.org/pdf/2205.11487.pdf . `guidance_scale = 1`
         # corresponds to doing no classifier free guidance.
         self._guidance_scale = max_guidance_scale
-        print("original image shape: ", image.shape)
         # 3. Encode input image
         image_embeddings = self._encode_image(image, device, num_videos_per_prompt, self.do_classifier_free_guidance)
-        print("do_classifier_free_guidance image_embedding shape: ", image_embeddings.shape)
-        # image_embeddings = 
         # NOTE: Stable Video Diffusion was conditioned on fps - 1, which is why it is reduced here.
         # See: https://github.com/Stability-AI/generative-models/blob/ed0997173f98eaf8f4edf7ba5fe8f15c6b877fd3/scripts/sampling/simple_video_sample.py#L188
         fps = fps - 1
@@ -267,7 +264,6 @@ class StableFlowVideoDiffusionPipeline(StableVideoDiffusionPipeline):
             num_videos_per_prompt=num_videos_per_prompt,
             do_classifier_free_guidance=self.do_classifier_free_guidance,
         )
-        # print("latent_model_input shape: ", latent_model_input.shape, image_latents.shape, latents.shape)
         image_latents = rearrange(image_latents, "(b f) c h w -> b f c h w", f=num_frames)
         image_latents = image_latents.to(image_embeddings.dtype)
 
@@ -286,7 +282,6 @@ class StableFlowVideoDiffusionPipeline(StableVideoDiffusionPipeline):
             num_videos_per_prompt,
             self.do_classifier_free_guidance,
         )
-        print("pipeline input added time shape: ", added_time_ids.shape)
         added_time_ids = added_time_ids.to(device)
 
         # 6. Prepare timesteps
@@ -326,7 +321,6 @@ class StableFlowVideoDiffusionPipeline(StableVideoDiffusionPipeline):
 
                 # Concatenate image_latents over channels dimension
                 latent_model_input = torch.cat([latent_model_input, image_latents], dim=2)
-                # print("pipeline latent shape: ", latent_model_input.shape)
                 # predict the noise residual
                 noise_pred = self.unet(
                     latent_model_input,
@@ -335,7 +329,6 @@ class StableFlowVideoDiffusionPipeline(StableVideoDiffusionPipeline):
                     added_time_ids=added_time_ids,
                     return_dict=False,
                 )[0]
-                # print("pipeline noise_pred shape: ", noise_pred.shape)
 
                 # perform guidance
                 if self.do_classifier_free_guidance:
